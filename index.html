@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SOYO Mind</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+body{background:#f6f5fb;padding:15px}
+.card{background:white;border-radius:20px;padding:20px;margin-bottom:15px}
+.header{display:flex;justify-content:space-between}
+.logo{font-weight:800;font-size:22px}
+.tag{font-size:12px;background:#efeafd;color:#6c5ce7;padding:6px 12px;border-radius:20px}
+.prerna{background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:white}
+.btn{width:100%;padding:15px;border-radius:14px;border:none;font-weight:700;margin-top:10px}
+.btn-primary{background:#111;color:white}
+.btn-pro{background:#fdcb6e;color:#111;display:flex;justify-content:space-between}
+.small{font-size:13px;color:#777;margin-top:5px}
+.chatbox{display:none;margin-top:10px}
+.chatbox textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #ddd}
+.msg{background:#f1f0ff;padding:10px;border-radius:10px;margin-top:8px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="header"><div class="logo">SOYO Mind</div><div class="tag">Free Mode</div></div>
+<div class="card prerna"><h3>Aaj Ki Prerna</h3><p id="quote">Koshish karne walo ki kabhi haar nahi hoti.</p></div>
+<div class="card"><h3>Talk to SOYO Mind</h3><p class="small">Apne dil ki baat bolo</p><button class="btn btn-primary" onclick="document.getElementById('chat').style.display='block'">Baat Karo</button><div id="chat" class="chatbox"><textarea id="userInput" rows="3" placeholder="Mujhe padhai me man nahi lag raha"></textarea><button class="btn btn-primary" onclick="talk()">Bhejo</button><div id="chatHistory"></div></div></div>
+<div class="card"><h3>Daily Momentum</h3><p class="small">5 min focus session</p></div>
+<div class="card" id="proCard"><h3>SOYO Mind PRO - ₹100</h3><p class="small">Unlimited baat, No ads. Paisa user se katega, tumse nahi.</p><button class="btn btn-pro" onclick="payNow()"><span>PRO Unlock karo</span><span>₹100</span></button></div>
+<script>
+function talk(){let input=document.getElementById('userInput').value;if(!input)return;let h=document.getElementById('chatHistory');let d=document.createElement('div');d.className='msg';d.innerText='You: '+input;h.appendChild(d);let r=document.createElement('div');r.className='msg';r.innerText='SOYO: '+input+' - Iske liye roz 5 min focus karo, tum kar loge!';h.appendChild(r);document.getElementById('userInput').value='';}
+function payNow(){alert('Yaha tumhara Razorpay ka Payment Link lagega. User pay karega to paisa direct tumhare account me ayega! Abhi demo hai.');document.getElementById('proCard').innerHTML='<h3>✅ PRO Activated (Demo)</h3>';}
+</script>
+</body>
+</html>
