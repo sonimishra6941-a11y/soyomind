@@ -34,10 +34,25 @@ let input=document.getElementById('userInput').value.trim();
 if(!input) return;
 let h=document.getElementById('chatHistory');
 let d=document.createElement('div');d.className='msg';d.innerText='You: '+input;h.appendChild(d);
-let r=document.createElement('div');r.className='msg';let ans="";
-if(/^[0-9+\-*/().% ]+$/.test(input)){
-try{let v=Function('"use strict";return ('+input+')')();ans=input+" = "+v+" hota hai! 🔥";}catch{ans="Galat hisab";}
-}else{ans="'"+input+"' - Samajh gaya! Focus karo!";}
+let r=document.createElement('div');r.className='msg';
+// SMART LOGIC
+let clean = input.replace(/×|x|X/g,'*').replace(/÷/g,'/').replace(/%/g,'');
+let match = clean.match(/([0-9\.\+\-\*\/\(\) ]+)/);
+let expr = match? match[0] : '';
+let ans="";
+if(expr){
+ try{
+   let v=Function('"use strict";return ('+expr+')')();
+   if(input.toLowerCase().includes('percent')){
+     v = v*100;
+     ans = expr+" = "+v.toFixed(2)+"% hota hai! 🔥";
+   }else{
+     ans = expr.trim()+" = "+v+" hota hai! 🔥";
+   }
+ }catch{ans="'"+input+"' - Samajh gaya! Focus karo!";}
+}else{
+ ans="'"+input+"' - Samajh gaya! Focus karo!";
+}
 r.innerText='SOYO: '+ans;h.appendChild(r);
 document.getElementById('userInput').value='';
 }
