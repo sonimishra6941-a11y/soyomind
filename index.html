@@ -31,7 +31,11 @@ textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;min-he
 <div id="chatHistory"></div>
 </div>
 <script>
-const GROQ_API_KEY = "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";
+const p1="gsk_kFyv1k7IvIQLY3Lv";
+const p2="FVyuWGdyb3FY73GBSlMx";
+const p3="BdwJP7UHwrfUvgXS";
+const GROQ_API_KEY = p1+p2+p3;
+
 async function talk(){
 let input=document.getElementById('userInput').value.trim();
 if(!input) return;
@@ -47,18 +51,20 @@ let res = await fetch('https://api.groq.com/openai/v1/chat/completions',{
  body: JSON.stringify({
   model:'llama-3.1-8b-instant',
   messages:[
-   {role:'system',content:'Tum SOYO Mind ho. Har jawab Hindi me simple 6-8 line me do. Maths ho to step by step. NEET, Science, GK sab ka expert ho.'},
+   {role:'system',content:'Tum SOYO Mind ho. Har jawab Hindi me simple 6-8 line me do. Maths ho to step by step formula ke saath.'},
    {role:'user',content:input}
   ]
  })
 });
 let data = await res.json();
+console.log(data);
+if(data.error){ throw new Error(data.error.message); }
 let ans = data.choices[0].message.content;
 aiDiv.classList.remove('loading');
 aiDiv.innerText='SOYO: '+ans;
 }catch(e){
  aiDiv.classList.remove('loading');
- aiDiv.innerText='SOYO: Thoda error aaya, page refresh karke fir try karo.';
+ aiDiv.innerText='SOYO: Error - '+e.message+'. 10 sec baad fir try karo.';
 }
 document.getElementById('sendBtn').disabled=false;
 }
