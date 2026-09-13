@@ -3,76 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOYO Mind - Real Gyan</title>
+<title>SOYO Mind - Unlimited AI</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#f6f5fb;padding:15px;font-family:sans-serif}
 .card{background:#fff;border-radius:16px;padding:16px;margin-top:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
 .header{display:flex;justify-content:space-between;align-items:center}
 .logo{font-weight:800;font-size:22px}
-.pro-badge{background:#111;color:#fff;padding:4px 10px;border-radius:20px;font-size:12px}
+.pro-badge{background:linear-gradient(90deg,#00ff88,#00d4ff);color:#111;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:800}
 .prerna{background:linear-gradient(135deg,#a78bfa,#f0abfc);color:#fff}
 .btn{width:100%;padding:15px;border-radius:12px;border:none;font-weight:700;margin-top:10px;cursor:pointer}
 .btn-primary{background:#111;color:#fff}
-textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;min-height:60px}
-.msg{padding:12px;border-radius:12px;margin-top:10px;white-space:pre-wrap;line-height:1.6;font-size:14px}
+textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;min-height:70px;font-size:15px}
+.msg{padding:12px;border-radius:12px;margin-top:10px;white-space:pre-wrap;line-height:1.7;font-size:14px}
 .msg-you{background:#f1f0ff}
 .msg-ai{background:#eef9ee;border-left:4px solid #22c55e}
+.loading{color:#888;font-style:italic}
 </style>
 </head>
 <body>
-<div class="header"><div class="logo">SOYO Mind</div><div class="pro-badge">100% WORKING</div></div>
-<div class="card prerna"><h3>Aaj Ki Prerna</h3><p>Har sawal ka pakka jawab! 💪</p></div>
+<div class="header"><div class="logo">SOYO Mind</div><div class="pro-badge">UNLIMITED AI LIVE</div></div>
+<div class="card prerna"><h3>Aaj Ki Prerna</h3><p>Ab har sawal ka jawab milega - NEET, GK, Maths, Hindi! 💪</p></div>
 <div class="card">
-<h3>Talk to SOYO Mind - Sab Puchho!</h3>
-<textarea id="userInput" placeholder="Cell kya hai? Tissue? Newton?"></textarea>
-<button class="btn btn-primary" onclick="talk()">Bhejo 🚀</button>
+<h3>Talk to SOYO Mind</h3>
+<textarea id="userInput" placeholder="Kuch bhi puchho..."></textarea>
+<button class="btn btn-primary" id="sendBtn" onclick="talk()">Bhejo 🚀</button>
 <div id="chatHistory"></div>
 </div>
 <script>
-const KB = {
-"cell": "Cell kya hota hai?\nCell jeevan ki sabse chhoti unit hai. Saare living beings cells se bane hote hain.\n2 prakar: 1) Prokaryotic (Bacteria) - nucleus nahi, 2) Eukaryotic (Human, Plant) - nucleus hota hai.\nHar cell me: Cell membrane, Cytoplasm, Nucleus hota hai. Mitochondria ko Powerhouse kehte hain.",
-"peepal": "Peepal raat me CO2 chhodta hai, O2 nahi deta. Din me photosynthesis se O2 deta hai. Raat me ped ke niche sona mana hai.",
-"photosynthesis": "Photosynthesis: Paudhe din me suraj ki roshni + paani + CO2 se apna khana (Glucose) aur O2 banate hain.\nFormula: 6CO2 + 6H2O -> C6H12O6 + 6O2",
-"tissue": "Tissue: Ek jaise cells ka group jo ek hi kaam karta hai. 4 types: Epithelial, Connective, Muscular, Nervous.",
-"mitochondria": "Mitochondria - Cell ka Powerhouse. ATP (energy) banata hai.",
-"newton": "Newton ke 3 niyam:\n1. Jadata ka niyam - Ruki cheez ruki rahegi.\n2. F=ma - Force = Mass x Acceleration.\n3. Kriya-Pratikriya - Har kriya ki barabar vipreet pratikriya.",
-"gravity": "Gravity: Dharti har cheez ko apni taraf kheenchti hai. Value 9.8 m/s²",
-"blood": "Blood me 4 cheez: RBC (O2 le jana), WBC (bimari se ladna), Platelets (khoon rokna), Plasma (liquid).",
-"heart": "Human Heart 1 din me 1 lakh baar dhadakta hai. 4 chamber: 2 Atria, 2 Ventricles.",
-"acid": "Acid khatta, pH <7. Base kadwa, pH >7. Nimbu me Citric Acid.",
-"computer": "Computer ke parts: Input (Keyboard), CPU (Dimag), Output (Screen).",
-"atom": "Atom sabse chhota kan jo matter banata hai. 3 parts: Proton(+), Neutron, Electron(-).",
-"force": "Force = Dhakka ya Kheech. Unit = Newton. Formula F=ma."
-};
-
-function talk(){
+const GROQ_API_KEY = "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";
+async function talk(){
 let input=document.getElementById('userInput').value.trim();
 if(!input) return;
 let h=document.getElementById('chatHistory');
 let you=document.createElement('div');you.className='msg msg-you';you.innerText='You: '+input;h.appendChild(you);
-let q=input.toLowerCase();
-let ans="";
-
-// Maths fast
-let clean=input.replace(/×/g,'*').replace(/÷/g,'/');
-if(/^[0-9\+\-\*\/\.\s\(\)%]+$/.test(clean) && clean.match(/\d.*[\+\-\*\/].*\d/)){
- try{ans=clean+" = "+eval(clean)+" hota hai! 🔥";}catch{}
-}
-
-if(!ans){
- for(let k in KB){
-   if(q.includes(k)){ans=KB[k];break;}
- }
-}
-if(!ans){
- if(q.includes("peepal")||q.includes("pipal")) ans=KB["peepal"];
- else if(q.includes("cell")) ans=KB["cell"];
- else ans="Bahut achha sawal: '"+input+"'\n\n"+(KB["cell"]+"\n\nTum is topic ko 2 baar padho aur ek diagram banao, pakka yaad ho jayega!").slice(0,400);
-}
-
-let ai=document.createElement('div');ai.className='msg msg-ai';ai.innerText='SOYO: '+ans;h.appendChild(ai);
+let aiDiv=document.createElement('div');aiDiv.className='msg msg-ai loading';aiDiv.innerText='SOYO soch raha hai...';h.appendChild(aiDiv);
 document.getElementById('userInput').value='';
+document.getElementById('sendBtn').disabled=true;
+try{
+let res = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+ method:'POST',
+ headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_API_KEY},
+ body: JSON.stringify({
+  model:'llama-3.1-8b-instant',
+  messages:[
+   {role:'system',content:'Tum SOYO Mind ho. Har jawab Hindi me simple 6-8 line me do. Maths ho to step by step. NEET, Science, GK sab ka expert ho.'},
+   {role:'user',content:input}
+  ]
+ })
+});
+let data = await res.json();
+let ans = data.choices[0].message.content;
+aiDiv.classList.remove('loading');
+aiDiv.innerText='SOYO: '+ans;
+}catch(e){
+ aiDiv.classList.remove('loading');
+ aiDiv.innerText='SOYO: Thoda error aaya, page refresh karke fir try karo.';
+}
+document.getElementById('sendBtn').disabled=false;
 }
 </script>
 </body>
