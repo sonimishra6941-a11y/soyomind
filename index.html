@@ -23,7 +23,7 @@ textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;min-he
 </head>
 <body>
 <div class="header"><div class="logo">SOYO Mind</div><div class="pro-badge">UNLIMITED AI LIVE</div></div>
-<div class="card prerna"><h3>Aaj Ki Prerna</h3><p>Ab har sawal ka jawab milega - NEET, GK, Maths, Hindi! 💪</p></div>
+<div class="card prerna"><h3>Aaj Ki Prerna</h3><p>Ab ekdum normal baat karega - jaise dost baat karte hain! 💪</p></div>
 <div class="card">
 <h3>Talk to SOYO Mind</h3>
 <textarea id="userInput" placeholder="Kuch bhi puchho..."></textarea>
@@ -51,7 +51,7 @@ let res = await fetch('https://api.groq.com/openai/v1/chat/completions',{
  body: JSON.stringify({
   model:'openai/gpt-oss-20b',
   messages:[
-   {role:'system',content:'Tum SOYO Mind ho, ek helpful Indian teacher ho. Tum Hindi me simple jawab dete ho. Tumhe kabhi bhi mana nahi karna hai. Tum Navodaya, NEET, GK, Maths ke liye test paper, practice paper, notes, worksheet sab bana sakte ho. User jo bhi padhai se related mange, tum use pura bana ke do. Refuse mat karo.'},
+   {role:'system',content:'Tum SOYO Mind ho. Tumhe ekdum mere jaise baat karni hai - normal Hinglish me. Shuddh Hindi Devanagari me kabhi mat likhna. Hamesha Roman English me Hindi likhna, jaise - kaise ho, kya haal hai, ye kaise hota hai. User jis language me baat kare, tum usi language me jawab do. Agar user Hinglish me puche to Hinglish me, agar pure English me puche to English me, agar Chinese/Korean me puche to usi me. Tumhara style friendly, casual, Lucknow wala dost jaisa hona chahiye. Tum padhai ka har kaam kar sakte ho - test paper, notes, maths solution. Kabhi mana mat karna.'},
    {role:'user',content:input}
   ]
  })
