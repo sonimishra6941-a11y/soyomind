@@ -3,60 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOYO Mind</title>
+<title>SOYO Mind - Padhai Wala AI</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#f6f5fb;padding:15px;font-family:sans-serif}
-.card{background:#fff;border-radius:16px;padding:16px;margin-top:12px}
-.header{display:flex;justify-content:space-between}
+.card{background:#fff;border-radius:16px;padding:16px;margin-top:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+.header{display:flex;justify-content:space-between;align-items:center}
 .logo{font-weight:800;font-size:22px}
+.pro-badge{background:#111;color:#fff;padding:4px 10px;border-radius:20px;font-size:12px}
 .prerna{background:linear-gradient(135deg,#a78bfa,#f0abfc);color:#fff}
-.btn{width:100%;padding:15px;border-radius:12px;border:none;font-weight:700;margin-top:10px}
+.btn{width:100%;padding:15px;border-radius:12px;border:none;font-weight:700;margin-top:10px;cursor:pointer}
 .btn-primary{background:#111;color:#fff}
 .btn-pro{background:#fdcb6e;color:#111}
-textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd}
-.msg{background:#f1f0ff;padding:10px;border-radius:12px;margin-top:10px;white-space:pre-wrap}
+textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;min-height:60px}
+.msg{padding:12px;border-radius:12px;margin-top:10px;white-space:pre-wrap;line-height:1.5}
+.msg-you{background:#f1f0ff}
+.msg-ai{background:#eef9ee;border-left:4px solid #22c55e}
 </style>
 </head>
 <body>
-<div class="header"><div class="logo">SOYO Mind</div><div>PRO</div></div>
-<div class="card prerna"><h3>Aaj Ki Prerna</h3><p>Himmat mat haro!</p></div>
+<div class="header"><div class="logo">SOYO Mind</div><div class="pro-badge">PRO</div></div>
+<div class="card prerna"><h3>Aaj Ki Prerna</h3><p id="prernaText">Padhai hi Superpower hai! 💪</p></div>
 <div class="card">
-<h3>Talk to SOYO Mind</h3>
-<textarea id="userInput" placeholder="4+9 likho"></textarea>
-<button class="btn btn-primary" onclick="talk()">Bhejo</button>
+<h3>Talk to SOYO Mind - Sab Puchho!</h3>
+<p style="font-size:12px;color:#666;margin:5px 0">Maths, Biology, Physics, Chemistry, GK - kuch bhi!</p>
+<textarea id="userInput" placeholder="Jaise: Peepal raat me O2 deta hai? / 500/367 ka % / Photosynthesis kya hai?"></textarea>
+<button class="btn btn-primary" onclick="talk()">Bhejo 🚀</button>
 <div id="chatHistory"></div>
 </div>
-<div class="card"><h3>PRO - ₹100</h3><button class="btn btn-pro" onclick="payNow()">PRO Unlock</button></div>
+<div class="card"><h3>SOYO Mind PRO - ₹100</h3><p style="font-size:13px;color:#666">Unlimited doubts, Notes, Tests</p><button class="btn btn-pro" onclick="payNow()">PRO Unlock karo ₹100</button></div>
 <script>
-function talk(){
-let input=document.getElementById('userInput').value.trim();
-if(!input) return;
-let h=document.getElementById('chatHistory');
-let d=document.createElement('div');d.className='msg';d.innerText='You: '+input;h.appendChild(d);
-let r=document.createElement('div');r.className='msg';
-// SMART LOGIC
-let clean = input.replace(/×|x|X/g,'*').replace(/÷/g,'/').replace(/%/g,'');
-let match = clean.match(/([0-9\.\+\-\*\/\(\) ]+)/);
-let expr = match? match[0] : '';
-let ans="";
-if(expr){
- try{
-   let v=Function('"use strict";return ('+expr+')')();
-   if(input.toLowerCase().includes('percent')){
-     v = v*100;
-     ans = expr+" = "+v.toFixed(2)+"% hota hai! 🔥";
-   }else{
-     ans = expr.trim()+" = "+v+" hota hai! 🔥";
-   }
- }catch{ans="'"+input+"' - Samajh gaya! Focus karo!";}
-}else{
- ans="'"+input+"' - Samajh gaya! Focus karo!";
-}
-r.innerText='SOYO: '+ans;h.appendChild(r);
-document.getElementById('userInput').value='';
-}
-function payNow(){alert('PRO Demo Active');}
-</script>
-</body>
-</html>
+const knowledge = {
+"peepal": "Peepal raat me CO2 chhodta hai, O2 nahi. Din me hi O2 deta hai. Raat me sab ped O2 lete hain aur CO2 chhodte hain. Isiliye raat me ped ke niche sona mana hai.",
+"photosynthesis": "Photosynthesis = Paudhe din me Suraj ki roshni, paani aur CO2 se apna khana (glucose) aur Oxygen banate hain. Formula: 6CO2 + 6H2O + Sunlight -> C6H12O6 + 6O2",
+"oxygen": "Oxygen (O2) jeevan ke liye jaruri gas hai. Paudhe din me photosynthesis se O2 dete hain.",
+"mitochondria": "Mitochondria ko cell ka Powerhouse kehte hain. Ye khane se energy (ATP) banata hai.",
+"newton": "Newton ke 3 niyam: 1. Jadata ka niyam, 2. F=ma, 3. Kriya-Pratikriya.",
+"gravity": "Gravity wo bal hai jo har cheez ko dharti ki taraf kheenchta hai. Value: 9.8 m/s²",
+"acid": "Acid khatta hota hai, pH <7. Base kadwa, pH >7. Jaise: Nimbu me Citric Acid.",
+"human heart": "Human heart 1 din me ~1 lakh baar dhadakta hai. 4 chamber hote hain: 2 Atria, 2 Ventricles.",
+"blood": "Blood me 4 cheez: RBC (O2 le jana), WBC (bimari se ladna), Platelets (khoon rokna), Plasma.",
+"computer": "Computer ek electronic machine hai jo data ko process karti hai. Parts: Input, CPU, Output."
+};
+
+const prernaList = ["Padhai hi Superpower hai!","Tum kar sakte ho!","Roz 1% behtar bano!","Mehn
