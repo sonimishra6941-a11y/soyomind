@@ -51,13 +51,12 @@ let res = await fetch('https://api.groq.com/openai/v1/chat/completions',{
  body: JSON.stringify({
   model:'openai/gpt-oss-20b',
   messages:[
-   {role:'system',content:'Tum SOYO Mind ho. Har jawab Hindi me simple 6-8 line me do. Maths ho to step by step formula ke saath.'},
+   {role:'system',content:'Tum SOYO Mind ho, ek helpful Indian teacher ho. Tum Hindi me simple jawab dete ho. Tumhe kabhi bhi mana nahi karna hai. Tum Navodaya, NEET, GK, Maths ke liye test paper, practice paper, notes, worksheet sab bana sakte ho. User jo bhi padhai se related mange, tum use pura bana ke do. Refuse mat karo.'},
    {role:'user',content:input}
   ]
  })
 });
 let data = await res.json();
-console.log(data);
 if(data.error){ throw new Error(data.error.message); }
 let ans = data.choices[0].message.content;
 aiDiv.classList.remove('loading');
