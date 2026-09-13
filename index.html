@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOYO Mind - Padhai Wala AI</title>
+<title>SOYO Mind - Real AI</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#f6f5fb;padding:15px;font-family:sans-serif}
@@ -14,88 +14,59 @@ body{background:#f6f5fb;padding:15px;font-family:sans-serif}
 .prerna{background:linear-gradient(135deg,#a78bfa,#f0abfc);color:#fff}
 .btn{width:100%;padding:15px;border-radius:12px;border:none;font-weight:700;margin-top:10px;cursor:pointer}
 .btn-primary{background:#111;color:#fff}
-.btn-pro{background:#fdcb6e;color:#111}
 textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;min-height:60px}
-.msg{padding:12px;border-radius:12px;margin-top:10px;white-space:pre-wrap;line-height:1.5}
+.msg{padding:12px;border-radius:12px;margin-top:10px;white-space:pre-wrap;line-height:1.6;font-size:14px}
 .msg-you{background:#f1f0ff}
 .msg-ai{background:#eef9ee;border-left:4px solid #22c55e}
+.loading{color:#888;font-style:italic}
 </style>
 </head>
 <body>
-<div class="header"><div class="logo">SOYO Mind</div><div class="pro-badge">PRO</div></div>
-<div class="card prerna"><h3>Aaj Ki Prerna</h3><p id="prernaText">Padhai hi Superpower hai! 💪</p></div>
+<div class="header"><div class="logo">SOYO Mind</div><div class="pro-badge">REAL AI</div></div>
+<div class="card prerna"><h3>Aaj Ki Prerna</h3><p>Har sawal ka jawab milega! 💪</p></div>
 <div class="card">
 <h3>Talk to SOYO Mind - Sab Puchho!</h3>
-<p style="font-size:12px;color:#666;margin:5px 0">Maths, Biology, Physics, Chemistry, GK - kuch bhi!</p>
-<textarea id="userInput" placeholder="Jaise: Peepal raat me O2 deta hai? / 500/367 ka % / Photosynthesis kya hai?"></textarea>
+<textarea id="userInput" placeholder="Kuch bhi puchho: Cell kya hai? Newton ka niyam?"></textarea>
 <button class="btn btn-primary" onclick="talk()">Bhejo 🚀</button>
 <div id="chatHistory"></div>
 </div>
-<div class="card"><h3>SOYO Mind PRO - ₹100</h3><p style="font-size:13px;color:#666">Unlimited doubts, Notes, Tests</p><button class="btn btn-pro" onclick="payNow()">PRO Unlock karo ₹100</button></div>
 <script>
-const knowledge = {
-"peepal": "Peepal raat me CO2 chhodta hai, O2 nahi. Din me hi O2 deta hai. Raat me sab ped O2 lete hain aur CO2 chhodte hain. Isiliye raat me ped ke niche sona mana hai.",
-"photosynthesis": "Photosynthesis = Paudhe din me Suraj ki roshni, paani aur CO2 se apna khana (glucose) aur Oxygen banate hain. Formula: 6CO2 + 6H2O + Sunlight -> C6H12O6 + 6O2",
-"oxygen": "Oxygen (O2) jeevan ke liye jaruri gas hai. Paudhe din me photosynthesis se O2 dete hain.",
-"mitochondria": "Mitochondria ko cell ka Powerhouse kehte hain. Ye khane se energy (ATP) banata hai.",
-"newton": "Newton ke 3 niyam: 1. Jadata ka niyam, 2. F=ma, 3. Kriya-Pratikriya.",
-"gravity": "Gravity wo bal hai jo har cheez ko dharti ki taraf kheenchta hai. Value: 9.8 m/s²",
-"acid": "Acid khatta hota hai, pH <7. Base kadwa, pH >7. Jaise: Nimbu me Citric Acid.",
-"human heart": "Human heart 1 din me ~1 lakh baar dhadakta hai. 4 chamber hote hain: 2 Atria, 2 Ventricles.",
-"blood": "Blood me 4 cheez: RBC (O2 le jana), WBC (bimari se ladna), Platelets (khoon rokna), Plasma.",
-"computer": "Computer ek electronic machine hai jo data ko process karti hai. Parts: Input, CPU, Output."
-};
-
-const prernaList = ["Padhai hi Superpower hai!","Tum kar sakte ho!","Roz 1% behtar bano!","Mehnat ka fal meetha hota hai!"];
-document.getElementById('prernaText').innerText = prernaList[Math.floor(Math.random()*prernaList.length)];
-
-function talk(){
+async function talk(){
 let input=document.getElementById('userInput').value.trim();
 if(!input) return;
 let h=document.getElementById('chatHistory');
 let you=document.createElement('div');you.className='msg msg-you';you.innerText='You: '+input;h.appendChild(you);
 
 let q = input.toLowerCase();
-let ans = "";
+let aiDiv=document.createElement('div');aiDiv.className='msg msg-ai loading';aiDiv.innerText='SOYO soch raha hai...';h.appendChild(aiDiv);
 
-// 1. MATHS LOGIC
-let cleanMath = q.replace(/×|x/g,'*').replace(/÷/g,'/').replace(/ka|ka percentage|percent|% ka|%|percentage/gi,'');
-let mathMatch = cleanMath.match(/([0-9\.\+\-\*\/\(\) ]{2,})/);
-if(mathMatch){
- let expr = mathMatch[1].trim();
- if(/^[0-9\.\+\-\*\/\(\) ]+$/.test(expr) && expr.length>1){
-  try{
-   let v = Function('"use strict";return ('+expr+')')();
-   if(input.toLowerCase().includes('percent')){
-     let parts = input.match(/(\d+)\s*\/\s*(\d+)/);
-     if(parts){ v = (parseFloat(parts[1])/parseFloat(parts[2]))*100; ans = parts[1]+"/"+parts[2]+" = "+v.toFixed(2)+"% hota hai! 🔥"; }
-     else{ ans = expr+" = "+(v*100).toFixed(2)+"%"; }
-   } else {
-     ans = expr+" = "+v+" hota hai! 🔥";
-   }
-  }catch{}
- }
+// 1. MATHS - Local fast answer
+let clean = input.replace(/×/g,'*').replace(/÷/g,'/');
+let mathMatch = clean.match(/^[\d\s\+\-\*\/\.\(\)%]+$/);
+if(mathMatch && /[\d]/.test(input) && input.length<20){
+ try{
+  let expr = clean.replace(/%/g,'/100');
+  let v = Function('"use strict";return ('+expr+')')();
+  aiDiv.classList.remove('loading');
+  aiDiv.innerText='SOYO: '+input+' = '+v+' hota hai! 🔥 Maths clear hai!';
+  document.getElementById('userInput').value='';
+  return;
+ }catch{}
 }
 
-// 2. SUBJECT KNOWLEDGE
-if(!ans){
- for(let key in knowledge){
-   if(q.includes(key)){ ans = knowledge[key]; break; }
- }
+// 2. REAL AI - Har subject ka jawab
+try{
+let prompt = `Tum SOYO Mind ho, ek padhai wala AI ho jo Hindi me simple, short, sahi jawab deta hai. Sawal: ${input}. 4-5 line me easy Hindi me samjhao, example ke saath.`;
+let res = await fetch('https://text.pollinations.ai/'+encodeURIComponent(prompt));
+let text = await res.text();
+aiDiv.classList.remove('loading');
+aiDiv.innerText='SOYO: '+text;
+}catch(e){
+aiDiv.classList.remove('loading');
+aiDiv.innerText='SOYO: Network slow hai. Dobara Bhejo dabao. Cell = Jeevan ki sabse chhoti unit hai. 2 tarah: Prokaryotic aur Eukaryotic. Human body crore cells se bani hai!';
 }
-
-// 3. DEFAULT SOYO STYLE ANSWER
-if(!ans){
- if(q.includes("peepal") || q.includes("pipal")) ans = knowledge["peepal"];
- else if(q.includes("kya hai") || q.includes("ka matlab")) ans = "'"+input+"' ka matlab hai: Ye ek important topic hai. Iska detail: "+input+" ke baare me aur padho, notes banao, ye exam me aata hai! Focus karo!";
- else ans = "Wah! '"+input+"' - Bahut achha sawal hai! Iske liye: 1. Concept samjho, 2. Example yaad karo, 3. Roz revise karo. Tum isko aasani se samajh loge! 💪";
-}
-
-let ai=document.createElement('div');ai.className='msg msg-ai';ai.innerText='SOYO: '+ans;h.appendChild(ai);
 document.getElementById('userInput').value='';
-h.scrollIntoView({behavior:'smooth'});
 }
-function payNow(){alert('PRO jald ayega! Abhi sab FREE hai!');}
 </script>
 </body>
 </html>
