@@ -1,23 +1,60 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SOYO</title>
-<style>body{margin:0;font-family:sans-serif} #chat{padding:15px;padding-bottom:90px} .ai{background:#eee;padding:12px;border-radius:15px;margin:10px 0} .user{background:#000;color:#fff;padding:12px;border-radius:15px;margin:10px 0;text-align:right} form{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;gap:8px;padding:10px;border-top:1px solid #ccc} input{flex:1;padding:14px;border-radius:25px;border:1px solid #aaa} button{padding:14px 22px;border-radius:25px;background:#000;color:#fff;border:0}</style>
+<title>SOYO Mind</title>
+<style>
+body{margin:0;font-family:Arial;background:#fff;height:100vh;display:flex;flex-direction:column}
+h1{margin:0;padding:12px;text-align:center;border-bottom:1px solid #ddd;font-size:18px}
+#chat{flex:1;overflow:auto;padding:15px;padding-bottom:90px}
+.ai{background:#f2f2f2;padding:12px 15px;border-radius:18px 18px 18px 0;margin:10px 0;max-width:90%;line-height:1.5;border:1px solid #eee}
+.user{background:#000;color:#fff;padding:12px 15px;border-radius:18px 18px 0 18px;margin:10px 0;margin-left:auto;max-width:85%}
+form{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;gap:8px;padding:12px;border-top:1px solid #ddd}
+input{flex:1;padding:14px 18px;border-radius:25px;border:1px solid #ccc;font-size:15px;outline:none}
+button{padding:14px 24px;border-radius:25px;background:#000;color:#fff;border:0;font-weight:bold}
+.small{font-size:11px;color:#888;text-align:center;margin-top:5px}
+</style>
 </head>
 <body>
-<div id="chat"><div class="ai">Namaste! Mai SOYO Mind hu. Koi bhi sawaal pucho.</div></div>
-<form onsubmit="go();return false;">
-<input id="q" placeholder="Sawaal likho..."><button type="submit">Bhejo</button>
+<h1>⭐ SOYO Mind - Full Answer Mode</h1>
+<div id="chat"></div>
+<form onsubmit="send();return false;">
+<input id="q" placeholder="Kuchh bhi pucho...">
+<button type="submit">Bhejo</button>
 </form>
+
 <script>
-function go(){
- var i=document.getElementById('q'); var v=i.value.trim(); if(!v) return;
- var c=document.getElementById('chat'); c.innerHTML+='<div class=user>'+v+'</div>';
- var l=v.toLowerCase(); var a='';
- if(l.includes('noun')) a='<b>Noun kya hota hai?</b><br>Naam wale shabd ko Noun kehte hain. Jaise Ram, Delhi, Pen, Hair, Oil.';
- else if(l.includes('oil')) a='Oil = Uncountable Noun hai.';
- else a='Aapne pucha: '+v+'<br>Iska jawab: Ye ek accha sawal hai. Iska matlab samjhata hu.';
- c.innerHTML+='<div class=ai>'+a+'</div>'; i.value=''; c.scrollTop=999999;
- window.scrollTo(0,999999);
+let chatDiv = document.getElementById('chat');
+let input = document.getElementById('q');
+
+// Chat history load karo
+let history = JSON.parse(localStorage.getItem('soyo_chat') || '[]');
+function render(){
+ chatDiv.innerHTML = '<div class=ai>Namaste! Mai SOYO Mind hu. Koi bhi sawaal pucho, ab mai pura detail me jawab dunga.</div>' + history.join('');
+ chatDiv.scrollTop = chatDiv.scrollHeight;
 }
-</script>
-</body></html>
+render();
+
+async function send(){
+ let txt = input.value.trim(); if(!txt) return;
+ let u = '<div class=user>'+txt+'</div>';
+ history.push(u);
+ render();
+ input.value = '';
+ 
+ let loadingId = 'load_'+Date.now();
+ history.push('<div class=ai id='+loadingId+'>Soch raha hu... ⏳</div>');
+ render();
+
+ let ans = '';
+ let l = txt.toLowerCase();
+
+ // 1. Bank wala sawal ke liye direct perfect jawab
+ if(l.includes('bank') && l.includes('2 account')){
+   ans = '<b>Haan, 1 hi vyakti ka ek hi bank me 2 account ho sakta hai!</b><br><br>1. Aap ek Savings aur ek Current account khol sakte ho.<br>2. Ya 2 alag branch me account.<br>3. Ya Joint aur Single account.<br><br>RBI ke niyam ke hisab se mana nahi hai, lekin bank aapse reason puch sakta hai. Aadhar, PAN same lagega.';
+ } 
+ else if(l.includes('noun')){
+   ans = '<b>Noun kya hota hai?</b><br>Noun kisi naam ko kehte hain. Jaise Vyakti (Ram), Jagah (Delhi), Cheez (Hair, Oil, Pen).<br><br><b>Hair aur Oil</b> dono Noun hain.';
+ }
+ else {
+   // 2. Baaki kisi bhi sawal ke liye Wikipedia se live answer lao (Free, no budget)
+   try{
+     let query = txt.replace(/kya hai|k
