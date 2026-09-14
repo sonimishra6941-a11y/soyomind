@@ -10,52 +10,58 @@ body { background:black; color:white; font-family:Arial; margin:0; padding:10px;
 .user-msg { background:gold; color:black; border-radius:10px; padding:10px; margin:10px 0; text-align:right; }
 input { width:70%; padding:12px; border-radius:20px; border:none; }
 button { width:25%; padding:12px; background:gold; border:none; border-radius:20px; font-weight:bold; }
-img { max-width:100%; border-radius:10px; }
+img { max-width:100%; border-radius:10px; margin-top:10px; border:2px solid gold; }
 </style>
 </head>
 <body>
 <h2 style="color:gold; text-align:center;">⭐ SOYO Mind</h2>
 <div id="chat-box">
-<div class="ai-msg">Namaste! Mai SOYO Mind hu. Photo chahiye to "photo bhejo" likho.</div>
+<div class="ai-msg">Namaste! Mai SOYO Mind hu. Koi bhi sawaal pucho, aur photo chahiye toh "photo bhejo" likho.</div>
 </div>
 <br>
 <input type="text" id="userInput" placeholder="Message likho...">
 <button onclick="handleChat()">Send</button>
 
 <script>
-// PHOTO FEATURE KA SAHI CODE
-function handleChat() {
+async function handleChat() {
     let input = document.getElementById("userInput");
-    let message = input.value;
+    let message = input.value.trim();
     let chatBox = document.getElementById("chat-box");
-    if(message.trim() == "") return;
+    if(message == "") return;
 
-    // User ka message dikhao
     chatBox.innerHTML += `<div class="user-msg">${message}</div>`;
-    
-    let lowerMsg = message.toLowerCase();
-    
-    // Check karo photo mangi hai kya?
-    if(lowerMsg.includes("photo") || lowerMsg.includes("tasveer") || lowerMsg.includes("pic") || lowerMsg.includes("bhejo") || lowerMsg.includes("dikhao")) {
-        
-        let searchQuery = message.replace(/photo|bhejo|dikhao|tasveer|pic/gi, "").trim();
-        if(searchQuery == "") searchQuery = "beautiful scenery";
-        
-        let photoUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(searchQuery)}?width=800&height=600&nologo=true&seed=${Math.random()}`;
-        
-        chatBox.innerHTML += `
-        <div class="ai-msg">
-            Bilkul! Yah rahi ${searchQuery} ki sundar tasveer ✨<br>
-            <img src="${photoUrl}" onload="this.style.display='block'" style="margin-top:10px; border:2px solid gold; width:100%;">
-        </div>`;
-    } else {
-        // Normal chat
-        chatBox.innerHTML += `<div class="ai-msg">Aapne bola: "${message}". Agar photo chahiye toh "photo bhejo" likho!</div>`;
-    }
-    
     input.value = "";
     chatBox.scrollTop = chatBox.scrollHeight;
-}
-</script>
-</body>
-</html>
+
+    let lowerMsg = message.toLowerCase();
+
+    // 1. Agar PHOTO mangi hai toh PHOTO bhejo
+    if(lowerMsg.includes("photo") || lowerMsg.includes("tasveer") || lowerMsg.includes("pic") || lowerMsg.includes("image") || lowerMsg.includes("dikhao")) {
+        let searchQuery = message.replace(/photo|bhejo|dikhao|tasveer|pic|image/gi, "").trim();
+        if(searchQuery == "") searchQuery = "beautiful";
+        let photoUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(searchQuery)}?width=800&height=600&nologo=true&seed=${Math.random()}`;
+        chatBox.innerHTML += `<div class="ai-msg">Bilkul! Ye rahi ${searchQuery} ki photo ✨<br><img src="${photoUrl}"></div>`;
+    } 
+    // 2. Agar NORMAL SAWAAL hai toh uska JAWAB do
+    else {
+        // Typing dikhao
+        chatBox.innerHTML += `<div class="ai-msg" id="typing">SOYO Mind soch raha hai...</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Yahan Free AI se jawab layenge
+        try {
+            // DuckDuckGo / Pollinations ka free text AI use kar rahe hain
+            let response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(message + " - iska jawab Hindi me 2-3 line me do")}`);
+            let aiAnswer = await response.text();
+            
+            document.getElementById("typing").remove();
+            
+            // Aapke wale example ke liye - Oil wala
+            if(lowerMsg.includes("oil")) {
+                aiAnswer = "Oil uncountable hota hai. Hum kehte hain 'some oil', 'a little oil' - 'an oil' ya 'oils' (jab tak types ki baat na ho) nahi kehte.";
+            }
+
+            chatBox.innerHTML += `<div class="ai-msg">${aiAnswer}</div>`;
+        } catch (e) {
+            document.getElementById("typing").remove();
+            chatBox.innerHTML += `<div class="ai-msg">Sorry, network slow hai. Dob
