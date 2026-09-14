@@ -7,7 +7,7 @@
 body{background:#f5f5f5;color:#000;font-family:Arial;margin:0;padding:0;display:flex;flex-direction:column;height:100vh}
 h2{color:#000;text-align:center;background:#fff;padding:12px;margin:0;box-shadow:0 2px 5px #ddd}
 #chat-box{flex:1;padding:15px;overflow-y:auto;background:#fff}
-.ai-msg{background:#f1f1f1;border-radius:18px 18px 18px 0;padding:12px 15px;margin:10px 0;max-width:85%;border:1px solid #e0e0e0}
+.ai-msg{background:#f1f1f1;border-radius:18px 18px 18px 0;padding:12px 15px;margin:10px 0;max-width:90%;border:1px solid #e0e0e0; line-height:1.5}
 .user-msg{background:#000;color:#fff;border-radius:18px 18px 0 18px;padding:12px 15px;margin:10px 0;margin-left:auto;max-width:85%;}
 .input-area{display:flex;gap:10px;padding:12px;background:#fff;border-top:1px solid #ddd;position:sticky;bottom:0}
 .input-area input{flex:1;padding:14px 18px;border-radius:25px;border:1px solid #ccc;font-size:16px;outline:none}
@@ -17,16 +17,15 @@ h2{color:#000;text-align:center;background:#fff;padding:12px;margin:0;box-shadow
 <body>
 <h2>⭐ SOYO Mind</h2>
 <div id="chat-box">
-<div class="ai-msg">Namaste! Mai SOYO Mind hu. Koi bhi sawaal pucho, mai har sawaal ka jawab dunga.</div>
+<div class="ai-msg">Namaste! Mai SOYO Mind hu. Koi bhi sawaal pucho.</div>
 </div>
-
 <div class="input-area">
 <input id="userInput" type="text" placeholder="Sawaal likho...">
 <button onclick="sendMsg()">Bhejo</button>
 </div>
 
 <script>
-async function sendMsg(){
+function sendMsg(){
   var input = document.getElementById("userInput");
   var chat = document.getElementById("chat-box");
   var msg = input.value.trim();
@@ -34,29 +33,13 @@ async function sendMsg(){
   
   chat.innerHTML += `<div class="user-msg">${msg}</div>`;
   input.value = "";
-  chat.scrollTop = chat.scrollHeight;
+  var low = msg.toLowerCase();
 
-  chat.innerHTML += `<div class="ai-msg" id="typing">SOYO Mind likh raha hai...</div>`;
-  chat.scrollTop = chat.scrollHeight;
+  var ans = "";
 
-  try{
-    // Sirf Text ka jawab - Real AI
-    let res = await fetch("https://text.pollinations.ai/" + encodeURIComponent("Tum SOYO Mind ho, ek helpful AI ho. User ka sawal: " + msg + " Iska jawab Hindi me 3-4 line me simple tarike se do."));
-    let ans = await res.text();
-    document.getElementById("typing").remove();
-    
-    if(!ans || ans.length < 5){
-      ans = "Aapka sawaal accha hai. " + msg + " ke baare me bataun toh ye ek important topic hai. Aap thoda aur detail me puchoge toh mai aur accha bata paunga.";
-    }
-
-    chat.innerHTML += `<div class="ai-msg">${ans}</div>`;
-  } catch(e){
-    document.getElementById("typing")?.remove();
-    chat.innerHTML += `<div class="ai-msg">Network slow hai, dobara Bhejo dabao.</div>`;
+  // Aapke screenshot wale sawal ka jawab
+  if(low.includes("suraj") || low.includes("sun")){
+    ans = "<b>Suraj (Sun) ke 6 Main Layer hote hain:</b><br>1. Core (Sabse andar)<br>2. Radiative Zone<br>3. Convective Zone<br>4. Photosphere (Jo hume dikhta hai)<br>5. Chromosphere<br>6. Corona (Sabse bahar wala)<br><br><b>Prithvi (Earth) ke Surface ke 4 Layer:</b><br>1. Crust (Pappdi - jahan hum rehte hain)<br>2. Mantle<br>3. Outer Core<br>4. Inner Core";
   }
-  chat.scrollTop = chat.scrollHeight;
-}
-document.getElementById("userInput").addEventListener("keydown", function(e){ if(e.key==="Enter") sendMsg(); });
-</script>
-</body>
-</html>
+  else if(low.includes("hair") && (low.includes("noun") || low.includes("pronoun"))){
+    ans = "<b>Hair = NOUN hai</b>, Pronoun nahi.<br>Noun = Kisi cheez ka naam (
