@@ -1,34 +1,23 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOYO Mind</title>
-<style>
-body{margin:0;padding:0;font-family:Arial;background:white;height:100vh;display:flex;flex-direction:column}
-#chat{flex:1;padding:15px;overflow-y:auto}
-.ai{background:#f0f0f0;padding:12px;border-radius:15px;margin:10px 0;display:inline-block;max-width:85%}
-.user{background:black;color:white;padding:12px;border-radius:15px;margin:10px 0;display:block;margin-left:auto;max-width:85%;text-align:right}
-#bottom{padding:12px;border-top:1px solid #ddd;display:flex;gap:10px;position:fixed;bottom:0;left:0;right:0;background:white}
-#bottom input{flex:1;padding:14px;border-radius:25px;border:1px solid #ccc}
-#bottom button{background:black;color:white;border-radius:25px;padding:14px 25px;border:none;font-weight:bold}
-</style>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SOYO</title>
+<style>body{margin:0;font-family:sans-serif} #chat{padding:15px;padding-bottom:90px} .ai{background:#eee;padding:12px;border-radius:15px;margin:10px 0} .user{background:#000;color:#fff;padding:12px;border-radius:15px;margin:10px 0;text-align:right} form{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;gap:8px;padding:10px;border-top:1px solid #ccc} input{flex:1;padding:14px;border-radius:25px;border:1px solid #aaa} button{padding:14px 22px;border-radius:25px;background:#000;color:#fff;border:0}</style>
 </head>
 <body>
 <div id="chat"><div class="ai">Namaste! Mai SOYO Mind hu. Koi bhi sawaal pucho.</div></div>
-<div style="height:70px"></div>
-<div id="bottom">
-<input type="text" id="t" placeholder="Sawaal likho...">
-<button onclick="go()">Bhejo</button>
-</div>
+<form onsubmit="go();return false;">
+<input id="q" placeholder="Sawaal likho..."><button type="submit">Bhejo</button>
+</form>
 <script>
 function go(){
- var i=document.getElementById("t");
- var c=document.getElementById("chat");
- var v=i.value.trim();
- if(v=="") return;
- c.innerHTML+='<div class="user">'+v+'</div>';
- i.value="";
- var low=v.toLowerCase();
- var ans="";
- if(low.includes("noun")) ans="<b>Noun:</b> Kisi naam ko Noun kehte hain. Jaise
+ var i=document.getElementById('q'); var v=i.value.trim(); if(!v) return;
+ var c=document.getElementById('chat'); c.innerHTML+='<div class=user>'+v+'</div>';
+ var l=v.toLowerCase(); var a='';
+ if(l.includes('noun')) a='<b>Noun kya hota hai?</b><br>Naam wale shabd ko Noun kehte hain. Jaise Ram, Delhi, Pen, Hair, Oil.';
+ else if(l.includes('oil')) a='Oil = Uncountable Noun hai.';
+ else a='Aapne pucha: '+v+'<br>Iska jawab: Ye ek accha sawal hai. Iska matlab samjhata hu.';
+ c.innerHTML+='<div class=ai>'+a+'</div>'; i.value=''; c.scrollTop=999999;
+ window.scrollTo(0,999999);
+}
+</script>
+</body></html>
