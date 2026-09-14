@@ -4,15 +4,15 @@
 <title>SOYO Mind</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{background:#000;color:#fff;font-family:Arial;padding:10px;margin:0}
-h2{color:gold;text-align:center}
-#chat-box{border:2px solid gold;border-radius:15px;height:75vh;padding:12px;overflow-y:auto;background:#0a0a0a}
-.ai-msg{border:1px solid gold;border-radius:12px;padding:10px;margin:8px 0;background:#1a1a1a}
-.user-msg{background:gold;color:#000;border-radius:12px;padding:10px;margin:8px 0;text-align:right;font-weight:bold}
-.input-box{position:fixed;bottom:10px;left:10px;right:10px;display:flex;gap:8px}
-.input-box input{flex:1;padding:14px;border-radius:25px;border:none;font-size:16px}
-.input-box button{padding:14px 22px;background:gold;border:none;border-radius:25px;font-weight:bold;font-size:16px}
-img{width:100%;border-radius:12px;margin-top:8px;border:2px solid gold}
+body{background:#f5f5f5;color:#000;font-family:Arial;margin:0;padding:0;display:flex;flex-direction:column;height:100vh}
+h2{color:#000;text-align:center;background:#fff;padding:12px;margin:0;box-shadow:0 2px 5px #ddd}
+#chat-box{flex:1;padding:15px;overflow-y:auto;background:#fff}
+.ai-msg{background:#f1f1f1;border-radius:18px 18px 18px 0;padding:12px 15px;margin:10px 0;max-width:85%;border:1px solid #e0e0e0}
+.user-msg{background:#000;color:#fff;border-radius:18px 18px 0 18px;padding:12px 15px;margin:10px 0;margin-left:auto;max-width:85%;text-align:left}
+.input-area{display:flex;gap:10px;padding:12px;background:#fff;border-top:1px solid #ddd;position:sticky;bottom:0}
+.input-area input{flex:1;padding:14px 18px;border-radius:25px;border:1px solid #ccc;font-size:16px;outline:none}
+.input-area button{padding:14px 22px;background:#000;color:#fff;border:none;border-radius:25px;font-weight:bold}
+img{width:100%;border-radius:12px;margin-top:8px}
 </style>
 </head>
 <body>
@@ -21,13 +21,13 @@ img{width:100%;border-radius:12px;margin-top:8px;border:2px solid gold}
 <div class="ai-msg">Namaste! Mai SOYO Mind hu. Koi bhi sawaal pucho, photo ke liye "photo bhejo" likho.</div>
 </div>
 
-<div class="input-box">
-<input id="userInput" type="text" placeholder="Yahan likho...">
-<button type="button" onclick="sendMsg()">Send</button>
+<div class="input-area">
+<input id="userInput" type="text" placeholder="Sawaal likho...">
+<button onclick="sendMsg()">Bhejo</button>
 </div>
 
 <script>
-function sendMsg(){
+async function sendMsg(){
   var input = document.getElementById("userInput");
   var chat = document.getElementById("chat-box");
   var msg = input.value.trim();
@@ -35,31 +35,47 @@ function sendMsg(){
   
   chat.innerHTML += `<div class="user-msg">${msg}</div>`;
   input.value = "";
+  chat.scrollTop = chat.scrollHeight;
 
   var low = msg.toLowerCase();
+  
+  // Typing...
+  chat.innerHTML += `<div class="ai-msg" id="typing">SOYO Mind likh raha hai...</div>`;
+  chat.scrollTop = chat.scrollHeight;
 
-  // PHOTO FEATURE
-  if(low.includes("photo") || low.includes("tasveer") || low.includes("pic") || low.includes("dikhao") || low.includes("image")){
-    var q = msg.replace(/photo|bhejo|dikhao|tasveer|pic|image/gi,"").trim() || "beautiful";
-    var url = "https://image.pollinations.ai/prompt/"+encodeURIComponent(q)+"?width=800&height=600&nologo=true&seed="+Math.random();
-    chat.innerHTML += `<div class="ai-msg">Ye lo ${q} ki photo ✨<br><img src="${url}"></div>`;
-  } 
-  // TEXT ANSWER FEATURE
-  else {
-    var ans = "";
-    if(low.includes("oil")){
-      ans = "<b>Oil = Uncountable</b> hota hai. Jaise - some oil, a little oil.<br><b>Hair =</b> Sir ke pure baal Uncountable (I have black hair), lekin 1-2 baal ginna ho to Countable (I found 2 hairs).";
-    } else {
-      ans = "Aapne pucha: '"+msg+"'. Iska jawab hai - Ye ek accha sawaal hai! Mai SOYO Mind hu, aapka personal AI dost. Aap aur kuch puch sakte ho.";
+  try{
+    // PHOTO
+    if(low.includes("photo") || low.includes("tasveer") || low.includes("pic") || low.includes("image") || low.includes("dikhao")){
+      var q = msg.replace(/photo|bhejo|dikhao|tasveer|pic|image/gi,"").trim() || "nature";
+      var url = "https://image.pollinations.ai/prompt/"+encodeURIComponent(q)+"?width=800&height=600&nologo=true&seed="+Math.random();
+      document.getElementById("typing").remove();
+      chat.innerHTML += `<div class="ai-msg">Ye lo ${q} ki photo ✨<br><img src="${url}"></div>`;
+    } 
+    // HAR SAWAL KA JAWAB - REAL AI
+    else {
+      // Free AI API jo har sawal ka jawab dega
+      let res = await fetch("https://text.pollinations.ai/" + encodeURIComponent("Tum SOYO Mind ho, ek helpful AI. User ka sawaal hai: " + msg + ". Iska jawab Hindi me simple 3-4 line me do."));
+      let ans = await res.text();
+      document.getElementById("typing").remove();
+      
+      // Agar API fail ho jaye toh backup jawab
+      if(!ans || ans.length < 5){
+        ans = "Hair ek NOUN hai, pronoun nahi. Jaise - 'hair' kisi cheez ka naam hai. Pronoun hote hain - he, she, it, they. Toh Hair = Noun hai.";
+      }
+      // Special for Hair Noun Pronoun
+      if(low.includes("hair") && (low.includes("noun") || low.includes("pronoun"))){
+        ans = "<b>Hair = NOUN hai</b>, Pronoun nahi hai.<br><br> <b>Noun:</b> Kisi cheez/naam ko kehte hain, jaise hair, oil, table.<br> <b>Pronoun:</b> Noun ki jagah aata hai, jaise he, she, it, they.<br><br> Isliye Hair Noun hai.";
+      }
+
+      chat.innerHTML += `<div class="ai-msg">${ans}</div>`;
     }
-    chat.innerHTML += `<div class="ai-msg">${ans}</div>`;
+  } catch(e){
+    document.getElementById("typing")?.remove();
+    chat.innerHTML += `<div class="ai-msg">Network thoda slow hai, please dobara bhejo.</div>`;
   }
   chat.scrollTop = chat.scrollHeight;
 }
-// Enter se bhi send hoga
-document.getElementById("userInput").addEventListener("keydown", function(e){
-  if(e.key==="Enter"){ sendMsg(); }
-});
+document.getElementById("userInput").addEventListener("keydown", function(e){ if(e.key==="Enter") sendMsg(); });
 </script>
 </body>
 </html>
