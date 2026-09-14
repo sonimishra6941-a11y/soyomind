@@ -1,59 +1,61 @@
-// SOYO MIND - PHOTO FEATURE FINAL CODE
+<!DOCTYPE html>
+<html>
+<head>
+<title>SOYO Mind</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { background:black; color:white; font-family:Arial; margin:0; padding:10px; }
+#chat-box { border:2px solid gold; border-radius:15px; height:80vh; padding:10px; overflow-y:auto; }
+.ai-msg { background:#1a1a1a; border:1px solid gold; border-radius:10px; padding:10px; margin:10px 0; }
+.user-msg { background:gold; color:black; border-radius:10px; padding:10px; margin:10px 0; text-align:right; }
+input { width:70%; padding:12px; border-radius:20px; border:none; }
+button { width:25%; padding:12px; background:gold; border:none; border-radius:20px; font-weight:bold; }
+img { max-width:100%; border-radius:10px; }
+</style>
+</head>
+<body>
+<h2 style="color:gold; text-align:center;">⭐ SOYO Mind</h2>
+<div id="chat-box">
+<div class="ai-msg">Namaste! Mai SOYO Mind hu. Photo chahiye to "photo bhejo" likho.</div>
+</div>
+<br>
+<input type="text" id="userInput" placeholder="Message likho...">
+<button onclick="handleChat()">Send</button>
 
-// 1. Ye check karega ki user ne photo mangi hai ya nahi
-function checkIfPhotoNeeded(userMessage) {
-    userMessage = userMessage.toLowerCase();
-    
-    // Agar inme se koi shabd likha toh samjho photo chahiye
-    if (userMessage.includes("photo") || 
-        userMessage.includes("tasveer") || 
-        userMessage.includes("image") || 
-        userMessage.includes("pic") ||
-        userMessage.includes("dikhao") ||
-        userMessage.includes("bhejo")) {
-        return true;
-    }
-    return false;
-}
-
-// 2. Photo bhejne ka function
-async function sendPhoto(userMessage) {
-    
-    // User ke message se search keyword nikalenge
-    // Jaise "Taj Mahal ki photo bhejo" -> "Taj Mahal"
-    let searchQuery = userMessage.replace("ki photo bhejo", "").replace("photo bhejo", "").replace("tasveer dikhao", "");
-
-    // AI Photo API se photo layenge (FREE API)
-    // Ye Pollinations AI ka free API hai - isme paise nahi lagte
-    let photoUrl = `https://image.pollinations.ai/prompt/${searchQuery}?width=800&height=600&nologo=true`;
-
-    // Chat me photo bhejo
+<script>
+// PHOTO FEATURE KA SAHI CODE
+function handleChat() {
+    let input = document.getElementById("userInput");
+    let message = input.value;
     let chatBox = document.getElementById("chat-box");
-    
-    let aiMessage = `
-    <div class="ai-msg">
-        <p>Bilkul! Yah rahi ${searchQuery} ki sundar tasveer ✨</p>
-        <img src="${photoUrl}" style="width:100%; border-radius:15px; margin-top:10px; border: 2px solid gold;">
-        <p style="font-size:12px; margin-top:5px;">${searchQuery} ki ye tasveer aapke liye.</p>
-    </div>
-    `;
-    
-    chatBox.innerHTML += aiMessage;
-}
+    if(message.trim() == "") return;
 
-// 3. Main Chat Logic - Yahi sabse main hai
-function onUserSend(message) {
+    // User ka message dikhao
+    chatBox.innerHTML += `<div class="user-msg">${message}</div>`;
     
-    // Pehle check karo kya user ne photo mangi?
-    if (checkIfPhotoNeeded(message)) {
-        sendPhoto(message); // Agar haan, toh photo bhejo
+    let lowerMsg = message.toLowerCase();
+    
+    // Check karo photo mangi hai kya?
+    if(lowerMsg.includes("photo") || lowerMsg.includes("tasveer") || lowerMsg.includes("pic") || lowerMsg.includes("bhejo") || lowerMsg.includes("dikhao")) {
+        
+        let searchQuery = message.replace(/photo|bhejo|dikhao|tasveer|pic/gi, "").trim();
+        if(searchQuery == "") searchQuery = "beautiful scenery";
+        
+        let photoUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(searchQuery)}?width=800&height=600&nologo=true&seed=${Math.random()}`;
+        
+        chatBox.innerHTML += `
+        <div class="ai-msg">
+            Bilkul! Yah rahi ${searchQuery} ki sundar tasveer ✨<br>
+            <img src="${photoUrl}" onload="this.style.display='block'" style="margin-top:10px; border:2px solid gold; width:100%;">
+        </div>`;
     } else {
-        sendNormalTextReply(message); // Agar nahi, toh normal jawab do
+        // Normal chat
+        chatBox.innerHTML += `<div class="ai-msg">Aapne bola: "${message}". Agar photo chahiye toh "photo bhejo" likho!</div>`;
     }
+    
+    input.value = "";
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
-
-// 4. Normal Text Reply (Pehle wala AI wala code)
-function sendNormalTextReply(message) {
-    // Yahan aapka purana AI ka code rahega jo text ka jawab deta hai
-    console.log("Normal text reply for: " + message);
-}
+</script>
+</body>
+</html>
