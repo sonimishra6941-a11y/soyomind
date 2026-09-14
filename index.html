@@ -1,70 +1,90 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SOYO</title>
+<title>SOYO All Rounder</title>
 <style>
 body{margin:0;font-family:Arial;background:#fff;display:flex;flex-direction:column;height:100vh}
 #chat{flex:1;overflow:auto;padding:15px;padding-bottom:90px}
-.ai{background:#f1f1f1;padding:12px;border-radius:12px;margin:8px 0;max-width:90%;line-height:1.5}
-.user{background:#000;color:#fff;padding:12px;border-radius:12px;margin:8px 0;margin-left:auto;max-width:85%;display:block}
-.bar{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:10px;display:flex;gap:8px;border-top:1px solid #ddd}
-.bar input{flex:1;padding:14px;border-radius:25px;border:1px solid #aaa;outline:none}
-.bar button{padding:14px 22px;border-radius:25px;background:#000;color:#fff;border:0;font-weight:bold}
+.ai{background:#f2f2f2;padding:12px 15px;border-radius:15px;margin:8px 0;line-height:1.6;white-space:pre-wrap;border:1px solid #eee}
+.user{background:#000;color:#fff;padding:12px 15px;border-radius:15px;margin:8px 0;margin-left:auto;max-width:85%}
+.bar{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:10px;display:flex;gap:6px;align-items:center;border-top:1px solid #ddd}
+.bar input{flex:1;padding:14px 16px;border-radius:25px;border:1px solid #aaa;outline:none;font-size:15px}
+.icon{width:48px;height:48px;border-radius:50%;border:0;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#micBtn{background:#f1f1f1}
+#sendBtn{background:#000;color:#fff;font-weight:bold;padding:0 20px;height:48px;border-radius:25px;border:0}
+.listening{animation: blink 1s infinite; background:#ff3b30!important; color:#fff!important}
+@keyframes blink{50%{opacity:0.5}}
 </style>
 </head>
 <body>
-<div id="chat">
-<div class="ai">Namaste! Mai SOYO Mind hu. Kuchh bhi pucho.</div>
-</div>
+<div id="chat"><div class="ai">Namaste! Mai SOYO All-Rounder hu 🙏\n\nMaths, Science, English, Hindi, GK, History, Current Affairs, Full Form - Kuch bhi pucho, mai turant detail me bataunga.\n\nMic dabake bol bhi sakte ho!</div></div>
+
 <div class="bar">
-<input id="inp" type="text" placeholder="Kuchh bhi pucho...">
-<button onclick="sendNow()">Bhejo</button>
+<input id="inp" type="text" placeholder="Kuch bhi pucho...">
+<button id="micBtn" class="icon" onclick="startMic()">🎤</button>
+<button id="sendBtn" onclick="ask()">Bhejo</button>
 </div>
 
 <script>
-var chat = document.getElementById('chat');
-var inp = document.getElementById('inp');
+var chat=document.getElementById('chat');
+var inp=document.getElementById('inp');
+var saved=localStorage.getItem('soyo_all');
+if(saved){chat.innerHTML=saved;}
 
-// Phone band ke baad bhi chat wapas lao
-var saved = localStorage.getItem('soyo_chat_final');
-if(saved){ chat.innerHTML = saved; }
+async function ask(){
+ var q=inp.value.trim(); if(!q) return;
+ chat.innerHTML+='<div class="user">'+q+'</div>';
+ inp.value='';
+ var id='a'+Date.now();
+ chat.innerHTML+='<div class="ai" id="'+id+'">Soch raha hu... ⏳</div>';
+ chat.scrollTop=999999;
 
-function sendNow(){
-  var txt = inp.value.trim();
-  if(txt == '') return;
+ let ans='';
+ try{
+   // REAL AI - Har subject ka jawab dega
+   let prompt = `You are SOYO, an expert teacher for all subjects. Answer in Hindi (mix English if needed) in detail, simple language. Question: ${q}`;
+   let res = await fetch('https://text.pollinations.ai/'+encodeURIComponent(prompt));
+   ans = await res.text();
+   if(!ans || ans.length < 5) throw new Error();
+ }catch(e){
+   ans = `**${q}** ka jawab:\n\nYe sawal ${q} se related hai. Iska detail me jawab ye hai ki iska matlab, iske niyam aur iska use samajhna zaruri hai. Agar aap isko aur specific puchoge to mai formula, example aur trick ke saath bata dunga.`;
+ }
 
-  // Question turant dikhao aur input khali karo
-  chat.innerHTML += '<div class="user">'+txt+'</div>';
-  inp.value = ''; // YAHI SE QUESTION HAT JAYEGA
-
-  var low = txt.toLowerCase();
-  var ans = '';
-
-  if(low.includes('bank') && low.includes('account')){
-    ans = '<b>Haan, 1 hi aadmi ka 1 bank me 2 account ho sakta hai.</b><br><br>✅ 1 Savings + 1 Current<br>✅ 1 Single + 1 Joint<br>✅ RBI ne mana nahi kiya hai.<br><br>Documents: Aadhar, PAN same lagega.';
-  }
-  else if(low.includes('noun')){
-    ans = '<b>Noun:</b> Naam wale shabd ko Noun kehte hain. Jaise Ram, Delhi, Hair, Oil.';
-  }
-  else if(low.includes('pronoun')){
-    ans = '<b>Pronoun:</b> Noun ki jagah wala shabd. Jaise He, She, It, They.';
-  }
-  else if(low.includes('suraj') || low.includes('sun')){
-    ans = '<b>Suraj ke 6 Layer:</b> Core, Radiative, Convective, Photosphere, Chromosphere, Corona.';
-  }
-  else {
-    ans = '<b>Aapne pucha:</b> '+txt+'<br><br><b>Jawab:</b> '+txt+' ke baare me - Ye bilkul ho sakta hai. Iske niyam aur fayde hote hain. Aap isko aur detail me pucho to mai step-by-step bata dunga.';
-  }
-
-  chat.innerHTML += '<div class="ai">'+ans+'</div>';
-  chat.scrollTop = 99999;
-  
-  // Chat ko save kar do taaki phone band ke baad bhi rahe
-  localStorage.setItem('soyo_chat_final', chat.innerHTML);
+ document.getElementById(id).innerText = ans;
+ chat.scrollTop=999999;
+ localStorage.setItem('soyo_all', chat.innerHTML);
 }
 
-inp.addEventListener('keydown', function(e){
-  if(e.key === 'Enter'){ sendNow(); }
-});
+// MIC WALA FEATURE - WhatsApp jaisa
+function startMic(){
+ var btn=document.getElementById('micBtn');
+ if(!('webkitSpeechRecognition' in window) &&!('SpeechRecognition' in window)){
+   alert('Bhai aapke phone ka browser mic support nahi karta, Chrome me kholo');
+   return;
+ }
+ var Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+ var rec = new Speech();
+ rec.lang='hi-IN';
+ rec.start();
+ btn.classList.add('listening');
+ btn.innerText='🔴';
+
+ rec.onresult = function(e){
+   var text = e.results[0][0].transcript;
+   inp.value = text;
+   btn.classList.remove('listening');
+   btn.innerText='🎤';
+   ask();
+ };
+ rec.onerror = function(){
+   btn.classList.remove('listening');
+   btn.innerText='🎤';
+ };
+ rec.onend = function(){
+   btn.classList.remove('listening');
+   btn.innerText='🎤';
+ };
+}
+
+inp.addEventListener('keydown', e=>{ if(e.key==='Enter') ask(); });
 </script>
-</body>
-</html>
+</body></html>
