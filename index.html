@@ -4,64 +4,53 @@
 <title>SOYO Mind</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body { background:black; color:white; font-family:Arial; margin:0; padding:10px; }
-#chat-box { border:2px solid gold; border-radius:15px; height:80vh; padding:10px; overflow-y:auto; }
+body { background:black; color:white; font-family:Arial; margin:0; padding:0; display:flex; flex-direction:column; height:100vh; }
+h2 { color:gold; text-align:center; }
+#chat-box { flex:1; border:2px solid gold; border-radius:15px; margin:10px; padding:10px; overflow-y:auto; }
 .ai-msg { background:#1a1a1a; border:1px solid gold; border-radius:10px; padding:10px; margin:10px 0; }
 .user-msg { background:gold; color:black; border-radius:10px; padding:10px; margin:10px 0; text-align:right; }
-input { width:70%; padding:12px; border-radius:20px; border:none; }
-button { width:25%; padding:12px; background:gold; border:none; border-radius:20px; font-weight:bold; }
+#input-area { display:flex; gap:10px; padding:10px; background:#111; position:sticky; bottom:0; }
+#userInput { flex:1; padding:15px; border-radius:25px; border:none; font-size:16px; }
+#sendBtn { padding:15px 25px; background:gold; color:black; border:none; border-radius:25px; font-weight:bold; font-size:16px; cursor:pointer; }
 img { max-width:100%; border-radius:10px; margin-top:10px; border:2px solid gold; }
 </style>
 </head>
 <body>
-<h2 style="color:gold; text-align:center;">⭐ SOYO Mind</h2>
+<h2>⭐ SOYO Mind</h2>
 <div id="chat-box">
-<div class="ai-msg">Namaste! Mai SOYO Mind hu. Koi bhi sawaal pucho, aur photo chahiye toh "photo bhejo" likho.</div>
+<div class="ai-msg">Namaste! Mai SOYO Mind hu. Koi bhi sawaal pucho, photo ke liye "photo bhejo" likho.</div>
 </div>
-<br>
-<input type="text" id="userInput" placeholder="Message likho...">
-<button onclick="handleChat()">Send</button>
+
+<div id="input-area">
+<input type="text" id="userInput" placeholder="Yahan likho...">
+<button id="sendBtn">Send</button>
+</div>
 
 <script>
-async function handleChat() {
-    let input = document.getElementById("userInput");
-    let message = input.value.trim();
-    let chatBox = document.getElementById("chat-box");
-    if(message == "") return;
+const input = document.getElementById("userInput");
+const btn = document.getElementById("sendBtn");
+const chatBox = document.getElementById("chat-box");
 
+btn.addEventListener("click", handleChat);
+input.addEventListener("keypress", function(e){
+  if(e.key === "Enter"){ handleChat(); }
+});
+
+async function handleChat() {
+    let message = input.value.trim();
+    if(message == "") return;
     chatBox.innerHTML += `<div class="user-msg">${message}</div>`;
     input.value = "";
-    chatBox.scrollTop = chatBox.scrollHeight;
-
     let lowerMsg = message.toLowerCase();
 
-    // 1. Agar PHOTO mangi hai toh PHOTO bhejo
     if(lowerMsg.includes("photo") || lowerMsg.includes("tasveer") || lowerMsg.includes("pic") || lowerMsg.includes("image") || lowerMsg.includes("dikhao")) {
-        let searchQuery = message.replace(/photo|bhejo|dikhao|tasveer|pic|image/gi, "").trim();
-        if(searchQuery == "") searchQuery = "beautiful";
-        let photoUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(searchQuery)}?width=800&height=600&nologo=true&seed=${Math.random()}`;
-        chatBox.innerHTML += `<div class="ai-msg">Bilkul! Ye rahi ${searchQuery} ki photo ✨<br><img src="${photoUrl}"></div>`;
-    } 
-    // 2. Agar NORMAL SAWAAL hai toh uska JAWAB do
-    else {
-        // Typing dikhao
-        chatBox.innerHTML += `<div class="ai-msg" id="typing">SOYO Mind soch raha hai...</div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
-
-        // Yahan Free AI se jawab layenge
+        let q = message.replace(/photo|bhejo|dikhao|tasveer|pic|image/gi, "").trim() || "nature";
+        let photoUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(q)}?width=800&height=600&nologo=true&seed=${Math.random()}`;
+        chatBox.innerHTML += `<div class="ai-msg">Ye lo ${q} ki photo ✨<br><img src="${photoUrl}"></div>`;
+    } else {
+        chatBox.innerHTML += `<div class="ai-msg" id="typing">Soch raha hu...</div>`;
         try {
-            // DuckDuckGo / Pollinations ka free text AI use kar rahe hain
-            let response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(message + " - iska jawab Hindi me 2-3 line me do")}`);
-            let aiAnswer = await response.text();
-            
-            document.getElementById("typing").remove();
-            
-            // Aapke wale example ke liye - Oil wala
-            if(lowerMsg.includes("oil")) {
-                aiAnswer = "Oil uncountable hota hai. Hum kehte hain 'some oil', 'a little oil' - 'an oil' ya 'oils' (jab tak types ki baat na ho) nahi kehte.";
-            }
-
-            chatBox.innerHTML += `<div class="ai-msg">${aiAnswer}</div>`;
-        } catch (e) {
-            document.getElementById("typing").remove();
-            chatBox.innerHTML += `<div class="ai-msg">Sorry, network slow hai. Dob
+            let res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(message + " ka jawab hindi me short me do")}`);
+            let ans = await res.text();
+            if(lowerMsg.includes("oil") && lowerMsg.includes("hair")){
+                ans
