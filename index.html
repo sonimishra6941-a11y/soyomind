@@ -1,1 +1,45 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOYO Mind</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:white;font-family:system-ui;padding:15px}
+h2{text-align:center;margin:10px;color:#00d4ff}
+#chat{height:75vh;overflow-y:auto;background:#141414;border:1px solid #222;padding:15px;border-radius:12px}
+.msg{margin:8px 0;padding:10px;border-radius:8px}
+.you{background:#1a2e1a} .ai{background:#1a1a2e}
+.input-area{position:fixed;bottom:10px;left:10px;right:10px;display:flex;gap:10px}
+#msg{flex:1;padding:14px;border-radius:10px;border:none;background:#222;color:white}
+button{padding:14px 20px;border-radius:10px;border:none;background:#00aaff;color:white;font-weight:bold}
+</style>
+</head>
+<body>
+<h2>SOYO Mind - My AI 🧠</h2>
+<div id="chat"><p class="msg ai">Hi! Mai SOYO Mind hu. Bolo kya help chahiye?</p></div>
+<div class="input-area">
+<input id="msg" placeholder="Message likho..." onkeypress="if(event.key==='Enter')send()">
+<button onclick="send()">Send</button>
+</div>
+<script>
+async function send(){
+ let m=document.getElementById('msg').value.trim();
+ if(!m) return;
+ let c=document.getElementById('chat');
+ c.innerHTML+=`<div class="msg you"><b>You:</b> ${m}</div>`;
+ document.getElementById('msg').value='';
+ c.scrollTop=c.scrollHeight;
+ try{
+  let r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:m})});
+  let d=await r.json();
+  c.innerHTML+=`<div class="msg ai"><b>SOYO:</b> ${d.reply||d.error}</div>`;
+ }catch(e){
+  c.innerHTML+=`<div class="msg ai" style="color:#ff5555">Error: ${e.message}</div>`;
+ }
+ c.scrollTop=c.scrollHeight;
+}
+</script>
+</body>
+</html>
