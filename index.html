@@ -32,7 +32,7 @@ const inp=document.getElementById('inp');
 function add(t,c){let d=document.createElement('div');d.className='msg '+c;d.innerText=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;}
 
 function speakIntro(){
-  const txt="I am introducing myself, my name is Soyo Mind, twenty four hours in a day, seven days in a week.";
+  const txt="I am introducing myself, my name is Soyo Mind, twenty four hours in a day, seven days in a week Ask me any question and doubt.";
   add("🔊 "+txt,"bot");
   const u=new SpeechSynthesisUtterance(txt);
   u.lang='en-US';u.rate=0.85;u.pitch=1.1;
