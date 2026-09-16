@@ -30,23 +30,31 @@ const chat=document.getElementById('chat');
 const inp=document.getElementById('inp');
 function add(t,c){let d=document.createElement('div');d.className='msg '+c;d.innerText=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;}
 
+let introSpoken=false;
 function speakIntro(){
-  const txt="I am introducing myself, my name is Soyo Mind, I am available twenty four hours, seven days a week. Ask me any question and doubt.";
-  add("🔊 "+txt,"bot");
-  const u=new SpeechSynthesisUtterance(txt);
-  u.lang='en-US';u.rate=0.9;u.pitch=1;
+  if(introSpoken) return;
+  introSpoken=true;
+  const part1="I am introducing myself, my name is Soyo Mind";
+  const part2="Ask me any question and doubt.";
+  add("🔊 "+part1+"... "+part2,"bot");
+  
+  let u1=new SpeechSynthesisUtterance(part1);
+  u1.lang='en-US';u1.rate=0.9;u1.pitch=1;
   speechSynthesis.cancel();
-  speechSynthesis.speak(u);
+  speechSynthesis.speak(u1);
+  
+  u1.onend=()=>{
+    setTimeout(()=>{
+      let u2=new SpeechSynthesisUtterance(part2);
+      u2.lang='en-US';u2.rate=0.9;u2.pitch=1;
+      speechSynthesis.speak(u2);
+    },800);
+  };
 }
 
 window.onload=()=>{
   setTimeout(speakIntro,1000);
-  // First touch se voice unlock hoga
-  document.body.addEventListener('click',()=>{
-    let unlock=new SpeechSynthesisUtterance(" ");
-    speechSynthesis.speak(unlock);
-    speakIntro();
-  },{once:true});
+  document.body.addEventListener('click',speakIntro,{once:true});
 };
 
 async function send(){
